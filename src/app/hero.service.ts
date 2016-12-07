@@ -8,7 +8,7 @@ import { HEROES } from './mock-heroes';
 @Injectable()
 export class HeroService {
 
-    private heroesUrl = 'http://146.148.55.224/test/heroes.php'; //URL to web api
+    private heroesUrl = 'http://146.148.55.224/test/heroes.php'; //URL to web api: pro: 146.148.55.224
     private headers = new Headers({'Content-Type': 'application/json'});
    
     constructor(private http: Http){}
@@ -57,5 +57,13 @@ export class HeroService {
         .toPromise()
         .then(res => res.json())
         .catch(this.handleError);
+    }
+
+    delete(id: number): Promise<void> {
+        const url = `${this.heroesUrl}?id=${id}`;
+        return this.http.delete(url, {headers: this.headers})
+                .toPromise()
+                .then(() => null)
+                .catch(this.handleError);
     }
 }
