@@ -8,17 +8,17 @@ import { HEROES } from './mock-heroes';
 @Injectable()
 export class HeroService {
 
-    private heroesUrl = 'api/heroes'; //URL to web api
+    private heroesUrl = 'http://146.148.55.224/test/heroes.php'; //URL to web api
     private headers = new Headers({'Content-Type': 'application/json'});
    
     constructor(private http: Http){}
 
     getHeroes(): Promise<Hero[]>{
-        /*return this.http.get(this.heroesUrl)
+        return this.http.get(this.heroesUrl)
                 .toPromise()
-                .then(response => response.json().data as Hero[])
-                .catch(this.handleError);*/
-        return Promise.resolve(HEROES);
+                .then(response => response.json() as Hero[])
+                .catch(this.handleError);
+        /*return Promise.resolve(HEROES);*/
     }
 
     private handleError(error: any): Promise<any> {
@@ -33,20 +33,29 @@ export class HeroService {
     }
 
     getHero(id: number): Promise<Hero>{
-        /*const url = `${this.heroesUrl}/{id}`;
+        const url = `${this.heroesUrl}?id=${id}`;
         return this.http.get(url)
                 .toPromise()
-                .then(response => response.json().data as Hero)
-                .catch(this.handleError);*/
-        return this.getHeroes().then(heroes => heroes.find(hero => hero.id === id));
+                .then(response => response.json() as Hero)
+                .catch(this.handleError);
+        //return this.getHeroes().then(heroes => heroes.find(hero => hero.id === id));
     }
 
     update(hero: Hero): Promise<Hero> {
-      const url = `${this.heroesUrl}/${hero.id}`;
+      const url = `${this.heroesUrl}`;
+      //const url = `http://192.168.0.22/test/put.php`;
       return this.http
             .put(url, JSON.stringify(hero), {headers: this.headers})
             .toPromise()
             .then(() => hero)
             .catch(this.handleError);
-}
+    }
+    
+    create(name: string): Promise<Hero> {
+      return this.http
+        .post(this.heroesUrl, JSON.stringify({name: name}), {headers: this.headers})
+        .toPromise()
+        .then(res => res.json())
+        .catch(this.handleError);
+    }
 }
